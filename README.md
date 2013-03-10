@@ -7,6 +7,7 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
 
 ## Example d'utilisation
 
+Afficher un carroussel avec 3000ms entre les images, les transition en fade et un effet de easeOutQuad.
 ```php
 
     <div class='carroussel'>
@@ -22,6 +23,4 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
         var List = argsToArray(document.getElementsByClassName("carroussel"));
         List.carroussel('3000', 'fade', 'easeOutQuad');
     </script>
-
-
 ```
