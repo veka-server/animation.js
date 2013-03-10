@@ -1,13 +1,13 @@
 animation.js
 ============
 
-Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade, carroussel, ...  ).
+Une librairie javascript ultra-legere pour utiliser les animations ( slide, fade, carroussel, ...  ).
 
-[Voir le site de présentation](http://veka-server.com)
+Cette librairie ne necessite pas JQuery !
 
 ### Examples d'utilisation
 
-###Afficher un carroussel avec 3000ms entre les images, les transition en fade et un effet de easeOutQuad.
+Afficher un carroussel avec 3000ms entre les images, les transition en fade et un effet de easeOutQuad.
 
 ```php
 
@@ -26,7 +26,7 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
     </script>
 ```
 
-###Déplacer un div (positioné en absolute) de 500px sur la droite avec un effet de easeOutBounce et un temps de deplacement de 2s.
+Déplacer un div (positioné en absolute) de 500px sur la droite avec un effet de easeOutBounce et un temps de deplacement de 2s.
 
 ```php
 
@@ -40,7 +40,7 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
     </script>
 ```
 
-###Faire disparaitre un div avec un effet de easeOutBounce et un temps de disparition de 2s.
+Faire disparaitre un div avec un effet de easeOutExpo et un temps de disparition de 2s.
 
 ```php
 
@@ -50,7 +50,7 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
             
     <script type="text/javascript" src='Javascript/animation.js'></script>
     <script type="text/javascript">
-    	document.getElementById('monBloc').fadeOut(2,'easeOutBounce');
+    	document.getElementById('monBloc').fadeOut(2,'easeOutExpo');
     </script>
 ```
 
