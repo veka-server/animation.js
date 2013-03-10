@@ -5,9 +5,10 @@ Une librairie javascript ultra-legere pour utiliser les animation ( slide, fade,
 
 [Voir le site de présentation](http://veka-server.com)
 
-## Example d'utilisation
+### Examples d'utilisation
 
-Afficher un carroussel avec 3000ms entre les images, les transition en fade et un effet de easeOutQuad.
+###Afficher un carroussel avec 3000ms entre les images, les transition en fade et un effet de easeOutQuad.
+
 ```php
 
     <div class='carroussel'>
@@ -24,3 +25,32 @@ Afficher un carroussel avec 3000ms entre les images, les transition en fade et u
         List.carroussel('3000', 'fade', 'easeOutQuad');
     </script>
 ```
+
+###Déplacer un div (positioné en absolute) de 500px sur la droite avec un effet de easeOutBounce et un temps de deplacement de 2s.
+
+```php
+
+    <div id='monBloc' style='position:absolute; left:0px; top:0px;'>
+        <img src="http://lorempixel.com/400/200/sports/1" />
+    </div>
+            
+    <script type="text/javascript" src='Javascript/animation.js'></script>
+    <script type="text/javascript">
+    	document.getElementById('monBloc').slideRight('easeOutBounce', 500, 2);
+    </script>
+```
+
+###Faire disparaitre un div avec un effet de easeOutBounce et un temps de disparition de 2s.
+
+```php
+
+    <div id='monBloc'>
+        <img src="http://lorempixel.com/400/200/sports/1" />
+    </div>
+            
+    <script type="text/javascript" src='Javascript/animation.js'></script>
+    <script type="text/javascript">
+    	document.getElementById('monBloc').fadeOut(2,'easeOutBounce');
+    </script>
+```
+
