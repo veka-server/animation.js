@@ -126,44 +126,70 @@ function argsToArray(args)
   return r;
 }
 
-
+function getStyle(oElm, strCssRule){
+    var strValue = "";
+    if(document.defaultView && document.defaultView.getComputedStyle){
+        strValue = document.defaultView.getComputedStyle(oElm, "").getPropertyValue(strCssRule);
+    }
+    else if(oElm.currentStyle){
+        strCssRule = strCssRule.replace(/\-(\w)/g, function (strMatch, p1){
+            return p1.toUpperCase();
+        });
+        strValue = oElm.currentStyle[strCssRule];
+    }
+    return strValue;
+}
 
 Element.prototype.slide = function (distance, direction, type, time, callback)
 {
+
+    var element = this;
+    var i = 0;
+    var end = 0;
+    var nb_etape = time*25;
+    var temps_une_etape = (time*1000)/nb_etape;
+
     switch(direction)
     {
         case 'top':
+                var styleDirection = 'top';
+                var origine = this.offsetTop;
+                var destination = origine-distance;
+                if (destination < 0)
+                {
+                    destination = -this.parentElement.offsetHeight;
+                }
+                break;
         case 'bottom':
                 var styleDirection = 'top';
                 var origine = this.offsetTop;
+                var destination = origine+distance;
+                if (destination+this.offsetHeight > this.parentElement.offsetHeight)
+                {
+                    destination = this.parentElement.offsetHeight;
+                }
                 break;
         case 'left':
+                var styleDirection = 'left';
+                var origine = this.offsetLeft;
+                var destination = origine-distance;
+                if (destination < 0)
+                {
+                    destination = -this.parentElement.offsetWidth;
+                }
+                break;
         case 'right':
                 var styleDirection = 'left';
                 var origine = this.offsetLeft;
-                break;
-    }
-
-    switch(direction)
-    {
-        case 'top' :
-        case 'left' :
-                var destination = origine-distance;
-                break;
-        case 'bottom' :
-        case 'right' :
                 var destination = origine+distance;
+                if (destination+this.offsetWidth > this.parentElement.offsetWidth)
+                {
+                    destination = this.parentElement.offsetWidth;
+                }
                 break;
     }
 
-
-    var element = this;
-    var serie = new Array();
-    var nb_etape = time*25;
-    var temps_une_etape = (time*1000)/nb_etape;
-    var i = 0;
     var new_position = origine;
-    var end = 0;
 
     var timer = setInterval(function () 
     {
@@ -176,25 +202,44 @@ Element.prototype.slide = function (distance, direction, type, time, callback)
                         end = 1;
                     }
                     break;
-            case 'bottom' :
             case 'right' :
-                    if (new_position >= destination )
+                if(destination >= element.parentElement.offsetWidth && getStyle(element.parentElement, "overflow") != 'hidden')
+                {
+                    if (new_position+element.offsetWidth >= destination )
+                    {   
+                        element.style.width = destination-new_position;
+                        element.style.overflow = 'hidden';
+                    }                               
+                }
+                if (new_position >= destination )
+                {
+                    end = 1;
+                }
+                break;
+            case 'bottom' :
+                if(destination >= element.parentElement.offsetHeight && getStyle(element.parentElement, "overflow") != 'hidden')
+                {
+                    if (new_position+element.offsetHeight >= destination )
                     {
-                        end = 1;
+                        element.style.height = destination-new_position;
+                        element.style.overflow = 'hidden';
                     }
-                    break;
+                }
+                if (new_position >= destination )
+                {
+                    end = 1;
+                }
+                break;
         }
 
         if (end == 1 )
         {
             clearInterval(timer);
-            if(typeof(callback) == "function") { callback(serie); }
+            if(typeof(callback) == "function") { callback(); }
         }
 
         element.style[styleDirection] = new_position;
 
-        var time = (i*temps_une_etape);
-        serie[time] = new_position;
         var difference = (destination-origine);
         new_position = Math[type](i,origine,difference,nb_etape);
 
@@ -215,14 +260,14 @@ Element.prototype.slideTop = function (type, distance, time, callback)
         'top', // direction
         type, // type d'animation
         time, // temps de l'animation en seconde (par defaut : 1 seconde)
-        function(serie){if(typeof(callback) == "function") {callback(serie)}}
+        function(){if(typeof(callback) == "function") {callback()}}
         );
 }
 
 Element.prototype.slideBottom = function (type, distance, time, callback)
 {
     if(!distance){ var out = 1; }
-    distance = distance || document.body.offsetHeight-this.offsetHeight-this.offsetTop;
+    distance = distance || this.parentElement.offsetHeight;
     type = type || 'easeInQuad'; 
     time = time || 1; 
 
@@ -234,7 +279,7 @@ Element.prototype.slideBottom = function (type, distance, time, callback)
         'bottom', // direction
         type, // type d'animation
         time, // temps de l'animation en seconde (par defaut : 1 seconde)
-        function(serie){ if(out==1){ element.style.display = 'none';} if(typeof(callback) == "function") {callback(serie)}}
+        function(){ if(out==1){ element.style.display = 'none';} if(typeof(callback) == "function") {callback()}}
         );
 }
 
@@ -250,14 +295,14 @@ Element.prototype.slideLeft = function (type, distance, time, callback)
         'left', // direction
         type, // type d'animation
         time, // temps de l'animation en seconde (par defaut : 1 seconde)
-        function(serie){if(typeof(callback) == "function") {callback(serie)}}
+        function(){if(typeof(callback) == "function") {callback()}}
         );
 }
 
 Element.prototype.slideRight = function (type, distance, time, callback)
 {
     if(!distance){ var out = 1; }
-    distance = distance || parent.offsetWidth-this.offsetLeft-this.offsetWidth;
+    distance = distance || this.parentElement.offsetWidth;
     type = type || 'easeInQuad'; 
     time = time || 1; 
 
@@ -269,41 +314,22 @@ Element.prototype.slideRight = function (type, distance, time, callback)
         'right', // direction
         type, // type d'animation
         time, // temps de l'animation en seconde (par defaut : 1 seconde)
-        function(serie){if(out==1){ element.style.display = 'none';} if(typeof(callback) == "function") {callback(serie)}}
+        function(){if(out==1){ element.style.display = 'none';} if(typeof(callback) == "function") {callback()}}
         );
 }
 
-Array.prototype.slideRight=function(type, distance, time, callback)
+var t =['slideTop','slideBottom','slideLeft','slideRight'];
+t.forEach(function(element, index, array)
 {
-    this.forEach(function(element, index, array)
+    var functionName = element;
+    Array.prototype[functionName]=function(type, distance, time, callback)
     {
-        element.slideRight(type, distance, time, function(serie){if(typeof(callback) == "function") {callback(serie)}});
-    });    
-}
-
-Array.prototype.slideLeft=function(type, distance, time, callback)
-{
-    this.forEach(function(element, index, array)
-    {
-        element.slideLeft(type, distance, time, function(serie){if(typeof(callback) == "function") {callback(serie)}});
-    });    
-}
-
-Array.prototype.slideTop=function(type, distance, time, callback)
-{
-    this.forEach(function(element, index, array)
-    {
-        element.slideTop(type, distance, time, function(serie){if(typeof(callback) == "function") {callback(serie)}});
-    });    
-}
-
-Array.prototype.slideBottom=function(type, distance, time, callback)
-{
-    this.forEach(function(element, index, array)
-    {
-        element.slideBottom(type, distance, time, function(serie){if(typeof(callback) == "function") {callback(serie)}});
-    });    
-}
+        this.forEach(function(element, index, array)
+        {
+            element[functionName](type, distance, time, function(){if(typeof(callback) == "function") {callback()}});
+        });    
+    };
+});    
 
 
 Element.prototype.fadeIn = function (time, effet, callback)
@@ -337,7 +363,7 @@ Array.prototype.fadeIn=function(time, callback)
 {
     this.forEach(function(element, index, array)
     {
-        element.fadeIn(time, effet, function(serie){if(typeof(callback) == "function") {callback(serie)}});
+        element.fadeIn(time, effet, function(){if(typeof(callback) == "function") {callback()}});
     });    
 }
 
@@ -373,7 +399,7 @@ Array.prototype.fadeOut = function(time, effet, callback)
 {
     this.forEach(function(element, index, array)
     {
-        element.fadeOut(time, effet, function(serie){if(typeof(callback) == "function") {callback(serie)}});
+        element.fadeOut(time, effet, function(){if(typeof(callback) == "function") {callback()}});
     });    
 }
 

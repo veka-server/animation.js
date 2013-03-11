@@ -16,6 +16,7 @@
         position: relative;
         overflow: hidden;
         margin:20px auto;
+        color:green;
     }
     </style>
 </head>
@@ -31,7 +32,7 @@
     <script type="text/javascript" src='Javascript/animation.js'></script>
     <script type="text/javascript">
         var List = argsToArray(document.getElementsByClassName("carroussel"));
-        List.carroussel('3000', 'fade', 'easeOutQuad');
+        List.carroussel('3000', 'slideBottom', 'easeOutQuad');
     </script>
 </body>
 </html>
